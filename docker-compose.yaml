@@ -1,0 +1,16 @@
+version: '3.1'
+
+services:
+  database:
+    image: 'mongo'
+    restart: always
+    container_name: 'blog-mongodb'
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: password
+      MONGO_INITDB_DATABASE: blog_db
+    volumes:
+      - ./docker/mongodb/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+      - ./data/mongodb:/data/db
+    ports:
+      - 27017:27017
