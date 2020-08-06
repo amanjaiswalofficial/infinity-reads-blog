@@ -1,10 +1,12 @@
+import datetime
+from typing import Tuple, List
+from mongoengine import DoesNotExist, ValidationError,\
+    InvalidQueryError
+
 from .models import Blog
 
-import datetime
-from mongoengine import DoesNotExist, ValidationError, InvalidQueryError
 
-
-def get_blog_obj(id: str):
+def _get_blog_obj(id: str) -> Blog:
     """
     function to get a particular blog object or
     return error if it doesn't exist.
@@ -18,22 +20,34 @@ def get_blog_obj(id: str):
     return blog, None
 
 
-def get_blog(id: str):
+def get_blog(id: str) -> Tuple:
     """
     Function used to fetch particular blog or
     return error if it is doesn't exist.
-    :param id:
-    :return:
+    :param id: blog id
+    :return: tuple of (blog object or any error)
     """
-    obj, error = get_blog_obj(id)
+    obj, error = _get_blog_obj(id)
     return obj.to_json(), error
 
 
-def create_blog(payload: dict):
+def get_blogs() -> List:
+    """
+    function used to fetch all the blogs
+    :return: List of blogs object
+    """
+    result = []
+    blogs = Blog.objects
+    for blog in blogs:
+        result.append(blog.to_json())
+    return result
+
+
+def create_blog(payload: dict) -> Tuple:
     """
     function used to create a particular blog.
     :param payload: details of blog in dict format.
-    :return: blog object or Any validation error.
+    :return: Tuple of (blog object or Any validation error).
     """
     try:
         obj = Blog(**payload).save()
@@ -42,7 +56,7 @@ def create_blog(payload: dict):
     return obj, None
 
 
-def update_blog(id: str, payload: dict):
+def update_blog(id: str, payload: dict) -> Tuple:
     """
     function used to update a particular blog.
     :param id: id of blog.
@@ -50,7 +64,7 @@ def update_blog(id: str, payload: dict):
     :return: blog object or Any validation or InvalidQuery error.
     """
     try:
-        obj, error = get_blog_obj(id)
+        obj, error = _get_blog_obj(id)
         if obj:
             payload["updated_at"] = datetime.datetime.now()
             obj.update(**payload)
@@ -62,13 +76,13 @@ def update_blog(id: str, payload: dict):
         return None, error
 
 
-def delete_blog(id: str):
+def delete_blog(id: str) -> Tuple:
     """
     Function used to delete a particular blog
     :param id:
-    :return:
+    :return: tuple of (success message or any error)
     """
-    obj, error = get_blog_obj(id)
+    obj, error = _get_blog_obj(id)
     if obj:
         obj.delete()
         return "Blog object deleted successfully", None
