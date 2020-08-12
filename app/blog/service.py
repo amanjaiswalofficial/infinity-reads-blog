@@ -17,6 +17,8 @@ def _get_blog_obj(id: str) -> Blog:
         blog = Blog.objects.get(pk=id)
     except DoesNotExist as error:
         return None, error
+    except ValidationError as error:
+        return None, error
     return blog, None
 
 
@@ -28,18 +30,26 @@ def get_blog(id: str) -> Tuple:
     :return: tuple of (blog object or any error)
     """
     obj, error = _get_blog_obj(id)
-    return obj.to_json(), error
+    if obj:
+        obj = [obj.to_json()]
+    return obj, error
 
 
-def get_blogs() -> List:
+def get_blogs(start, limit) -> List:
     """
     function used to fetch all the blogs
     :return: List of blogs object
     """
     result = []
-    blogs = Blog.objects
+    start = int(start)
+    limit = int(limit)
+
+    # extract result according to bounds
+    blogs = Blog.objects().order_by("-created_at")[start:limit+start]
+
     for blog in blogs:
         result.append(blog.to_json())
+
     return result
 
 
@@ -68,7 +78,7 @@ def update_blog(id: str, payload: dict) -> Tuple:
         if obj:
             payload["updated_at"] = datetime.datetime.now()
             obj.update(**payload)
-            return "Blog object updated successfully", None
+            return None, None
         return None, error
     except InvalidQueryError as error:
         return None, error
@@ -85,5 +95,5 @@ def delete_blog(id: str) -> Tuple:
     obj, error = _get_blog_obj(id)
     if obj:
         obj.delete()
-        return "Blog object deleted successfully", None
+        return None, None
     return None, error

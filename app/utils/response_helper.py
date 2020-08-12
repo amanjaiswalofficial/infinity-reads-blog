@@ -1,7 +1,7 @@
 import time
 from datetime import datetime
 from functools import partial
-from typing import AnyStr, Dict, Union, List
+from typing import AnyStr, Dict, Union, List, Any
 
 from app.utils import status
 from app.utils.constants import APP_NAME, DATETIME_FORMAT

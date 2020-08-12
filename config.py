@@ -9,7 +9,7 @@ env = Env()
 current_env = getenv('BLOG_ENV') or 'local'
 
 if not path.exists("{}.env".format(current_env)):
-    raise EnvironmentError("FLASK_ENV not set properly for {} env.".format(
+    raise EnvironmentError("BLOG_ENV not set properly for {} env.".format(
         current_env))
 
 # loading the selected .env file
