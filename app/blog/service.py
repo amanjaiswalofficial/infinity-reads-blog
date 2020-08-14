@@ -3,7 +3,7 @@ from typing import Tuple, List
 from mongoengine import DoesNotExist, ValidationError,\
     InvalidQueryError
 
-from .models import Blog
+from .models import Blog, blog_schema, blogs_schema
 
 
 def _get_blog_obj(id: str) -> Blog:
@@ -15,9 +15,7 @@ def _get_blog_obj(id: str) -> Blog:
     """
     try:
         blog = Blog.objects.get(pk=id)
-    except DoesNotExist as error:
-        return None, error
-    except ValidationError as error:
+    except (DoesNotExist, ValidationError) as error:
         return None, error
     return blog, None
 
@@ -30,27 +28,26 @@ def get_blog(id: str) -> Tuple:
     :return: tuple of (blog object or any error)
     """
     obj, error = _get_blog_obj(id)
-    if obj:
-        obj = [obj.to_json()]
+
+    if not error:
+        obj = [blog_schema.dump(obj)]
     return obj, error
 
 
-def get_blogs(start, limit) -> List:
+def get_blogs(start: int = 0, limit: int = 10,) -> List:
     """
     function used to fetch all the blogs
     :return: List of blogs object
     """
-    result = []
     start = int(start)
     limit = int(limit)
+    order_by = ("-created_at",)
+
+    blogs = Blog.objects.order_by(*order_by)
 
     # extract result according to bounds
-    blogs = Blog.objects().order_by("-created_at")[start:limit+start]
 
-    for blog in blogs:
-        result.append(blog.to_json())
-
-    return result
+    return [blogs_schema.dump(blogs[start:limit + start])]
 
 
 def create_blog(payload: dict) -> Tuple:
@@ -73,16 +70,17 @@ def update_blog(id: str, payload: dict) -> Tuple:
     :param payload: details of blog in dict format.
     :return: blog object or Any validation or InvalidQuery error.
     """
+    obj, error = _get_blog_obj(id)
+
+    if error:
+        return None, error
+
+    payload["updated_at"] = datetime.datetime.now()
     try:
-        obj, error = _get_blog_obj(id)
-        if obj:
-            payload["updated_at"] = datetime.datetime.now()
-            obj.update(**payload)
-            return None, None
-        return None, error
-    except InvalidQueryError as error:
-        return None, error
-    except ValidationError as error:
+        obj.update(**payload)
+        blog, error = get_blog(id=id)
+        return blog, error
+    except (InvalidQueryError, ValidationError) as error:
         return None, error
 
 

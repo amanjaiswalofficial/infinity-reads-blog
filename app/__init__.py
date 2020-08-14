@@ -1,8 +1,10 @@
 from flask import Flask
 from app.db import MongoAlchemy
+from flask_marshmallow import Marshmallow
 
 # Globally accessible libraries
-ma = MongoAlchemy()
+db = MongoAlchemy()
+ma = Marshmallow()
 
 
 def create_app(**kwargs):
@@ -10,6 +12,7 @@ def create_app(**kwargs):
     app = Flask(__name__)
     app.config.from_pyfile('../config.py')
 
+    db.init_app(app)
     ma.init_app(app)
 
     with app.app_context():

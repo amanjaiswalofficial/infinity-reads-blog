@@ -17,7 +17,7 @@ PAYLOAD_UPDATE = {
     "title": "title updated"
 }
 
-BULK_BLOGS = [PAYLOAD]
+BULK_BLOGS = [PAYLOAD, PAYLOAD]
 
 FIELD_REQUIRED = "ValidationError (Blog:None) (Field is required: ['title'])"
 DOES_NOT_EXIST = "Blog matching query does not exist."

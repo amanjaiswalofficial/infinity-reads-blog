@@ -4,7 +4,7 @@ from flask import Blueprint, request
 from app.utils.response_helper import (success_response as success,
                                        failure_response as failure)
 from app.blog.constants import BlogMessage
-from .service import get_blog, create_blog, update_blog,\
+from .service import get_blog, create_blog, update_blog, \
     delete_blog, get_blogs
 
 blog = Blueprint('blog', __name__)
@@ -27,7 +27,8 @@ def blog_view(id: str) -> Dict:
         payload = request.get_json()
         result, error = update_blog(id, payload)
         message = BlogMessage.UPDATE_SUCCESS
-    else:
+
+    elif request.method == "DELETE":
         obj, error = delete_blog(id)
         message = BlogMessage.DELETE_SUCCESS
     return success(data=result, message=message) if not error else failure(message=error)
@@ -45,7 +46,7 @@ def blog_create_view() -> Dict:
         if not error else failure(message=error)
 
 
-@blog.route("/blogs", methods=['GET'])
+@blog.route("/blogs/", methods=['GET'])
 def blogs_view() -> Dict:
     """
     API to fetch all the blogs.
@@ -54,5 +55,5 @@ def blogs_view() -> Dict:
     params = request.args
     start = params.get('start', 0)
     limit = params.get('limit', 20)
-    result = get_blogs(start, limit)
+    result = get_blogs(start=start, limit=limit)
     return success(data=result)

@@ -10,11 +10,14 @@ class TestBlogView:
     """
     def test_create_blog_ok(self, test_client, init_blog, module_mocker):
         """
-        success case to create a particular blog.
+        GIVEN a test client, blog and
+        module_mocker object
+        WHEN the POST '/blog' url is hit
+        THEN it creates a particular blog
         :param test_client:
         :param init_blog:
         :param module_mocker:
-        :return:
+        :return: None
         """
         module_mocker.patch('app.blog.views.create_blog',
                             return_value=(init_blog, None))
@@ -28,9 +31,12 @@ class TestBlogView:
 
     def test_create_blog_fail(self, test_client, module_mocker):
         """
-        failure case of create blog if request payload is wrong.
+        GIVEN a test client and
+        module_mocker object
+        WHEN the POST '/blog' url is hit
+        THEN it throws an error
         :param test_client:
-        :return:
+        :return: None
         """
         module_mocker.patch('app.blog.views.create_blog',
                             return_value=(None, FIELD_REQUIRED))
@@ -44,10 +50,13 @@ class TestBlogView:
 
     def test_get_blog_ok(self, test_client, module_mocker):
         """
-        success case to fetch a particular blog based upon id.
+        GIVEN a test client and
+        module_mocker object
+        WHEN the GET '/blog/<id>' url is hit
+        THEN it fetch a particular blog
         :param test_client:
         :param module_mocker:
-        :return:
+        :return: None
         """
         module_mocker.patch('app.blog.views.get_blog',
                             return_value=([PAYLOAD], None))
@@ -59,11 +68,13 @@ class TestBlogView:
 
     def test_get_blog_fail(self, test_client, module_mocker):
         """
-        failure case to fetch a particular blog if the blog
-        doesn't exists in db.
+        GIVEN a test client and
+        module_mocker object
+        WHEN the GET '/blog/<id>' url is hit
+        THEN it throws an error
         :param test_client:
         :param module_mocker:
-        :return:
+        :return: None
         """
         module_mocker.patch('app.blog.views.get_blog',
                             return_value=(None, DOES_NOT_EXIST))
@@ -75,10 +86,14 @@ class TestBlogView:
 
     def test_update_blog_ok(self, test_client, module_mocker):
         """
-        success case to update a blog.
+        GIVEN a test client and
+        module_mocker object
+        WHEN the PUT '/blog/<id>' url is hit
+        with new payload
+        THEN it updates a blog
         :param test_client:
         :param module_mocker:
-        :return:
+        :return: None
         """
         module_mocker.patch('app.blog.views.update_blog',
                             return_value=(None, None))
@@ -91,10 +106,14 @@ class TestBlogView:
 
     def test_update_blog_fail(self, test_client, module_mocker):
         """
-        failure case to update a blog having a wrong payload
+        GIVEN a test client and
+        module_mocker object
+        WHEN the PUT '/blog/<id>' url is hit
+        with wrong payload
+        THEN it throws an error
         :param test_client:
         :param module_mocker:
-        :return:
+        :return: None
         """
         module_mocker.patch('app.blog.views.update_blog',
                             return_value=(None, STRING_VALIDATION_ERROR))
@@ -107,10 +126,13 @@ class TestBlogView:
 
     def test_delete_blog_ok(self, test_client, module_mocker):
         """
-        success case to delete a blog.
+        GIVEN a test client and
+        module_mocker object
+        WHEN the DEL '/blog/<id>' url is hit
+        THEN it deletes a particular blog.
         :param test_client:
         :param module_mocker:
-        :return:
+        :return: None
         """
         module_mocker.patch('app.blog.views.delete_blog',
                             return_value=(None, None))
@@ -122,10 +144,13 @@ class TestBlogView:
 
     def test_delete_blog_fail(self, test_client, module_mocker):
         """
-        failure case to delete a blog having blog doesn't exist.
+        GIVEN a test client and
+        module_mocker object
+        WHEN the DEl '/blog/<id>' url is hit
+        THEN it deletes a particular blog
         :param test_client:
         :param module_mocker:
-        :return:
+        :return: None
         """
         module_mocker.patch('app.blog.views.delete_blog',
                             return_value=(None, DOES_NOT_EXIST))
@@ -137,15 +162,38 @@ class TestBlogView:
 
     def test_get_blogs_ok(self, test_client, module_mocker):
         """
-        success case to fetch blogs.
+        GIVEN a test client and
+        module_mocker object
+        WHEN the GET '/blogs/' url is hit
+        without limits
+        THEN it fetch a list of blogs
         :param test_client:
         :param module_mocker:
-        :return:
+        :return: None
         """
         module_mocker.patch('app.blog.views.get_blogs',
                             return_value=BULK_BLOGS)
 
-        response = test_client.get('/blogs')
+        response = test_client.get('/blogs/')
+
+        assert response.json.get('code') == HTTP_200_OK
+        assert response.json.get("data") == BULK_BLOGS
+
+    def test_get_blogs_ok_1(self, test_client, module_mocker):
+        """
+        GIVEN a test client and
+        module_mocker object
+        WHEN the GET '/blogs/' url is hit
+        with limits
+        THEN it fetch a list of blogs
+        :param test_client:
+        :param module_mocker:
+        :return: None
+        """
+        module_mocker.patch('app.blog.views.get_blogs',
+                            return_value=BULK_BLOGS)
+
+        response = test_client.get('/blogs/?start=0&limit=2')
 
         assert response.json.get('code') == HTTP_200_OK
         assert response.json.get("data") == BULK_BLOGS
