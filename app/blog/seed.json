@@ -1,0 +1,28 @@
+{
+  "blog":
+    [
+      {
+          "title": "FakerPress",
+          "content": "FakerPress gives the option to set the number of posts to generate, it also allows the creation of various post types such as a regular post, pages, users, categories, attachments etc."
+      },
+      {
+          "title": "The Dummy",
+          "content": "The next of the list is WP Dummy Content. Whilst not as often updated as FakerPress, it is still a very good WordPress Plugin to generate dummy content on your blog.",
+          "tags": ["wordpress", "dummy"]
+      },
+      {
+          "title": "Lorem Ipsum",
+          "content": "Better Lorem Ipsum Generator is yet another dummy content generator for WordPress. This plugin has some additional features when compared to the rest above, the most important ones are its ability to generate custom taxonomies and custom post types automatically."
+      },
+      {
+          "title": "WP Lipsum",
+          "content": "WP Lipsum is yet another dummy data generator WordPress plugin, it allows you to add dummy text using Shortcodes and Template tags. This is a great plugin for generating dummy text on your WordPress Blog with ease.",
+          "tags": ["Lorem"]
+      },
+      {
+          "title": "Example Title",
+          "content": "Example Content is one of the simplest plugins that helps you to generate dummy content on your WordPress website. The plugin adds dummy text that helps you in developing a new themes or website. You can delete the whole content with the help of this plugin.",
+          "tags": ["dummy", "example"]
+      }
+    ]
+}

@@ -1,7 +1,8 @@
 from flask import Flask
-from mongoengine import connect
-
+from mongoengine import connect, Document
+from pymongo.errors import ServerSelectionTimeoutError
 from app.utils.constants import CONFIG_NOT_FOUND
+from app.utils.constants import CONNECTION_REFUSED
 
 
 class MongoAlchemy:
@@ -18,7 +19,7 @@ class MongoAlchemy:
         self.max_idle_time = None
         self.connection_timeout = 10000
         self.heartbeat_frequency = 10000
-        self.server_timeout = 30000
+        self.server_timeout = 100
 
     def init_app(self, app: Flask = None) -> None:
         """
@@ -55,4 +56,16 @@ class MongoAlchemy:
         """
         if not self.database_uri:
             raise KeyError(CONFIG_NOT_FOUND.format("MONGODB_DATABASE_URI"))
-        connect(host=self.database_uri, **self.config)
+        client = connect(host=self.database_uri, **self.config)
+        self._test_connection(client)
+
+    def _test_connection(self, client) -> None:
+        """
+        This method will test the connection to ensure whether the DB
+        is available or not
+        :return:
+        """
+        try:
+            client.server_info()
+        except ServerSelectionTimeoutError:
+            raise IOError(CONNECTION_REFUSED)

@@ -24,6 +24,9 @@ class Blog(Base):
     content = StringField(required=True)
     tags = ListField(StringField(max_length=30))
 
+    def __repr__(self):
+        return "<Blog %r>" % self.title
+
     def comments(self):
         return Comment.objects(blog=self).all()
 

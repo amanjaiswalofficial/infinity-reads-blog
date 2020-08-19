@@ -53,7 +53,10 @@ def blogs_view() -> Dict:
     :return: List of JSON response.
     """
     params = request.args
-    start = params.get('start', 0)
-    limit = params.get('limit', 20)
-    result = get_blogs(start=start, limit=limit)
+    start = int(params.get('start', 0))
+    limit = int(params.get('limit', 20))
+    search_by = params.get('search')
+    sort_by = params.get('sort')
+    result = get_blogs(search_by, sort_by,
+                       start=start, limit=limit)
     return success(data=result)

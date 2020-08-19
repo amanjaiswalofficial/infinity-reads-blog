@@ -51,4 +51,5 @@ def init_blog(test_client):
     finally:
         # Teardown blog object
         obj.delete()
+        print("object deleted successfully")
 

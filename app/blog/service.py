@@ -34,20 +34,27 @@ def get_blog(id: str) -> Tuple:
     return obj, error
 
 
-def get_blogs(start: int = 0, limit: int = 10,) -> List:
+def get_blogs(search: str = None, sort_by: str = None,
+              start: int = 0, limit: int = 20,) -> List:
     """
     function used to fetch all the blogs
+    :param search:
+    :param sort_by:
+    :param start:
+    :param limit:
     :return: List of blogs object
     """
-    start = int(start)
-    limit = int(limit)
-    order_by = ("-created_at",)
 
-    blogs = Blog.objects.order_by(*order_by)
+    order_by = tuple(sort_by.split(",")) if sort_by else ("-created_at",)
+
+    if search:
+        blogs = Blog.objects(title__icontains=search).order_by(*order_by)
+    else:
+        blogs = Blog.objects().order_by(*order_by)
 
     # extract result according to bounds
 
-    return [blogs_schema.dump(blogs[start:limit + start])]
+    return blogs_schema.dump(blogs[start:limit + start])
 
 
 def create_blog(payload: dict) -> Tuple:

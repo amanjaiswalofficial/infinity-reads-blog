@@ -75,15 +75,26 @@ class TestBlogService:
 
     def test_get_blogs_ok(self):
         """
-        GIVEN a wrong_id
-        WHEN get_blog() in blog service
+        GIVEN a start and limit
+        WHEN get_blogs() in blog service
         is called
-        THEN throws an error that object
-        doesn't exists.
+        THEN returns a list of objects
         :return: None
         """
-        result = get_blogs(0, 1)
+        result = get_blogs(start=0, limit=1)
         assert len(result) == 1
+        assert type(result) is list
+
+    def test_get_blogs_ok_1(self):
+        """
+        GIVEN a search text and sort_by
+        WHEN get_blogs() in blog service
+        is called
+        THEN returns a list of objects
+        :return: None
+        """
+        result = get_blogs(search="test", sort_by='-content')
+        assert "test" in result[0]['title']
         assert type(result) is list
 
     def test_update_blog_ok(self, init_blog):
