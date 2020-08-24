@@ -27,17 +27,19 @@ def get_blog(id: str) -> Tuple:
     :param id: blog id
     :return: tuple of (blog object or any error)
     """
-    obj, error = _get_blog_obj(id)
+    blog, error = _get_blog_obj(id)
 
     if not error:
-        obj = [blog_schema.dump(obj)]
-    return obj, error
+        blog = [blog_schema.dump(blog)]
+    return {"blogs": blog}, error
 
 
 def get_blogs(search: str = None, sort_by: str = None,
-              start: int = 0, limit: int = 20,) -> List:
+              tags: str = None, start: int = 0,
+              limit: int = 20,) -> List:
     """
     function used to fetch all the blogs
+    :param tags:
     :param search:
     :param sort_by:
     :param start:
@@ -52,9 +54,17 @@ def get_blogs(search: str = None, sort_by: str = None,
     else:
         blogs = Blog.objects().order_by(*order_by)
 
-    # extract result according to bounds
+    if tags:
+        tags = tags.split(',')
+        blogs = blogs.filter(tags__in=tags)
 
-    return blogs_schema.dump(blogs[start:limit + start])
+    # extract result according to bounds
+    response = {
+        "total_count": len(blogs),
+        "blogs": blogs_schema.dump(blogs[start:limit + start])
+    }
+
+    return response
 
 
 def create_blog(payload: dict) -> Tuple:
@@ -102,3 +112,15 @@ def delete_blog(id: str) -> Tuple:
         obj.delete()
         return None, None
     return None, error
+
+
+def get_filters() -> List:
+    """
+    function used to fetch filter's,
+    currently fetching only tags.
+    :return:
+    """
+    tags_list = Blog.objects.scalar("tags")
+    flatten_tags = set(tag for tags in tags_list for tag in tags)
+    return {"tags": list(flatten_tags)}
+

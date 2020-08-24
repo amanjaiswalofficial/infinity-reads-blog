@@ -38,7 +38,8 @@ def init_blog(test_client):
         payload = {
             "title": "title test",
             "content": "content test",
-            "user_id": "234567890"
+            "user_id": "234567890",
+            "tags": ["dummy"]
         }
 
         obj = Blog(**payload).save()

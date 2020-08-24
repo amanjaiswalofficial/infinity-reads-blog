@@ -5,7 +5,7 @@ from app.utils.response_helper import (success_response as success,
                                        failure_response as failure)
 from app.blog.constants import BlogMessage
 from .service import get_blog, create_blog, update_blog, \
-    delete_blog, get_blogs
+    delete_blog, get_blogs, get_filters
 
 blog = Blueprint('blog', __name__)
 
@@ -57,6 +57,18 @@ def blogs_view() -> Dict:
     limit = int(params.get('limit', 20))
     search_by = params.get('search')
     sort_by = params.get('sort')
-    result = get_blogs(search_by, sort_by,
+    tags = params.get('tags')
+    result = get_blogs(search_by, sort_by, tags,
                        start=start, limit=limit)
+    return success(data=result)
+
+
+@blog.route("/filters/", methods=['GET'])
+def blog_filters() -> Dict:
+    """
+    API to fetch all filter's
+    related to blog
+    :return:
+    """
+    result = get_filters()
     return success(data=result)

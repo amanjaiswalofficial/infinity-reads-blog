@@ -2,7 +2,7 @@ from app.blog.models import blog_schema
 from tests.unittests.constants import PAYLOAD, DOES_NOT_EXIST, PAYLOAD_UPDATE, PAYLOAD_WRONG, \
     STRING_VALIDATION_ERROR, PAYLOAD_WRONG1, FIELD_REQUIRED
 from app.blog.service import _get_blog_obj, get_blogs, update_blog, \
-    create_blog, get_blog
+    create_blog, get_blog, get_filters
 
 
 class TestBlogService:
@@ -56,8 +56,8 @@ class TestBlogService:
         :return: None
         """
         result, error = get_blog(str(init_blog.id))
-        assert result[0]['id'] == str(init_blog.id)
-        assert result[0]['content'] == init_blog.content
+        assert result['blogs'][0]['id'] == str(init_blog.id)
+        assert result['blogs'][0]['content'] == init_blog.content
         assert error is None
 
     def test_get_blog_ok_fail(self):
@@ -71,7 +71,7 @@ class TestBlogService:
         """
         result, error = get_blog("5f31246634b63b01feed1745")
         assert DOES_NOT_EXIST in str(error)
-        assert result is None
+        assert result['blogs'] is None
 
     def test_get_blogs_ok(self):
         """
@@ -82,20 +82,22 @@ class TestBlogService:
         :return: None
         """
         result = get_blogs(start=0, limit=1)
-        assert len(result) == 1
-        assert type(result) is list
+        assert len(result['blogs']) == 1
+        assert type(result['blogs']) is list
 
     def test_get_blogs_ok_1(self):
         """
         GIVEN a search text and sort_by
+        and tags
         WHEN get_blogs() in blog service
         is called
         THEN returns a list of objects
         :return: None
         """
-        result = get_blogs(search="test", sort_by='-content')
-        assert "test" in result[0]['title']
-        assert type(result) is list
+        result = get_blogs(search="test", sort_by='-content',
+                           tags="dummy")
+        assert "test" in result['blogs'][0]['title']
+        assert type(result['blogs']) is list
 
     def test_update_blog_ok(self, init_blog):
         """
@@ -108,7 +110,7 @@ class TestBlogService:
         :return: None
         """
         result, error = update_blog(str(init_blog.id), PAYLOAD_UPDATE)
-        assert result[0]['title'] == PAYLOAD_UPDATE['title']
+        assert result['blogs'][0]['title'] == PAYLOAD_UPDATE['title']
         assert error is None
 
     def test_update_blog_fail(self, init_blog):
@@ -149,3 +151,15 @@ class TestBlogService:
         result, error = create_blog(PAYLOAD_WRONG)
         assert FIELD_REQUIRED in str(error)
         assert result is None
+
+    def test_get_all_tags_filter(self):
+        """
+        WHEN get_filters() in blog service
+        is called
+        THEN it returns a list of tags
+        :return: None
+        """
+        result = get_filters()
+        assert "dummy" in result['tags']
+        assert isinstance(result['tags'], list)
+

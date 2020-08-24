@@ -1,7 +1,7 @@
 from app.blog.constants import BlogMessage
 from app.utils.status import HTTP_200_OK, HTTP_400_BAD_REQUEST
 from tests.unittests.constants import PAYLOAD, PAYLOAD_WRONG, FIELD_REQUIRED, \
-    DOES_NOT_EXIST, PAYLOAD_UPDATE, STRING_VALIDATION_ERROR, BULK_BLOGS
+    DOES_NOT_EXIST, PAYLOAD_UPDATE, STRING_VALIDATION_ERROR, BULK_BLOGS, TAGS
 
 
 class TestBlogView:
@@ -178,6 +178,7 @@ class TestBlogView:
 
         assert response.json.get('code') == HTTP_200_OK
         assert response.json.get("data") == BULK_BLOGS
+        assert "total_count" in response.json.get("data")
 
     def test_get_blogs_ok_1(self, test_client, module_mocker):
         """
@@ -198,5 +199,22 @@ class TestBlogView:
         assert response.json.get('code') == HTTP_200_OK
         assert response.json.get("data") == BULK_BLOGS
 
+    def test_get_tags_filter(self, test_client, module_mocker):
+        """
+        GIVEN a test client and
+        module_mocker object
+        WHEN the GET '/filters/' url is hit
+        THEN it fetch a list of tags
+        :param test_client:
+        :param module_mocker:
+        :return: None
+        """
+        module_mocker.patch('app.blog.views.get_filters',
+                            return_value=TAGS)
+
+        response = test_client.get('/filters/')
+
+        assert response.json.get("data") == TAGS
+        assert response.json.get('code') == HTTP_200_OK
 
 
