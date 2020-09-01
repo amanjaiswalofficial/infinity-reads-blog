@@ -10,6 +10,13 @@ class SeedMessage(object):
                           "skipping writing seed data"
 
 
+class ExchangeType:
+    DEFAULT = 'default'
+    DIRECT = "direct"
+    FANOUT = "fanout"
+    TOPIC = 'topic'
+
+
 POOL_CHUNK_SIZE = 100
 APP_NAME = "blog_app"
 CONFIG_NOT_FOUND = "Config not found for {}, please check the config file."
