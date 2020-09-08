@@ -29,5 +29,6 @@ def create_app(**kwargs):
         return app
 
 
-# import all the queues and callbacks
+# Need to import all the callbacks and queues
+# that we define as it is required by queue object
 from app.rabbitmq import callbacks

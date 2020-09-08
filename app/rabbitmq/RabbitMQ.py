@@ -61,13 +61,14 @@ class RabbitMQ(object):
     def queue_declare(self, queue_name='test-queue', passive=False, durable=False,
                       exclusive=False, auto_delete=False, arguments=None):
         """
-        method used to declare the queue
-        :param queue_name:
-        :param passive:
-        :param durable:
-        :param exclusive:
-        :param auto_delete:
-        :param arguments:
+        method used to declare the queue and
+        If the queue already exists, no change is made to the queue.
+        :param queue_name: the name of the queue which we want to declare.
+        :param passive: check whether a queue exists without modifying the server state.
+        :param durable: whether the queue is active or not when server restarts.
+        :param exclusive: Exclusive queues may only be consumed by the current connection.
+        :param auto_delete: the queue is deleted when all consumers have finished using it.
+        :param arguments: set of arguments for the declaration of the queue.
         :return:
         """
         result = self._channel.queue_declare(queue=queue_name, passive=passive,
