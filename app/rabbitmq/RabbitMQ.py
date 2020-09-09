@@ -91,7 +91,7 @@ class RabbitMQ(object):
                                  exchange=exchange_name,
                                  routing_key=routing_key)
 
-    def basic_consuming(self, queue_name, callback):
+    def define_consuming(self, queue_name, callback):
         """
         method used to define the basic consuming
         :param queue_name:
@@ -122,9 +122,9 @@ class RabbitMQ(object):
                     queue_name = self.temporary_queue_declare()
                 else:
                     self._channel.queue_declare(queue=queue_name, auto_delete=True)
-                    self.basic_consuming(queue_name, callback)
+                    self.define_consuming(queue_name, callback)
 
-            if type == ExchangeType.FANOUT or type == ExchangeType.DIRECT or type == ExchangeType.TOPIC:
+            if type in (ExchangeType.FANOUT, ExchangeType.DIRECT, ExchangeType.TOPIC):
                 if not queue_name:
                     # If queue name is empty, then declare a temporary queue
                     queue_name = self.temporary_queue_declare()
@@ -132,7 +132,7 @@ class RabbitMQ(object):
                     self._channel.queue_declare(queue=queue_name)
                 self.exchange_bind_to_queue(type, exchange_name, routing_key, queue_name)
                 # Consume the queue
-                self.basic_consuming(queue_name, callback)
+                self.define_consuming(queue_name, callback)
 
         t = threading.Thread(target=self.consuming)
         logger.info(" * The flask RabbitMQ application is consuming")
