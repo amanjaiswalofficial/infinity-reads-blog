@@ -1,6 +1,7 @@
 """This module calls methods for seed script once called"""
 from importlib import import_module
 from pathlib import Path
+from app.utils.constants import SeedMessage
 
 # folder name containing the executable files for seed script
 # from app.utils.constants import DisplayMessage
@@ -30,10 +31,9 @@ def init_seed_script() -> None:
             execute = getattr(module, "execute")
             execute()
         except AttributeError:
-            # raise AttributeError(DisplayMessage.EXECUTE_MISSING.format(file))
-            raise AttributeError("Missing File")
+            raise AttributeError(SeedMessage.EXECUTE_MISSING.format(file))
         except ModuleNotFoundError:
             raise \
-                ModuleNotFoundError("Missing format")
+                ModuleNotFoundError(SeedMessage.MODULE_MISSING.format(file))
         except Exception as err:
             raise err

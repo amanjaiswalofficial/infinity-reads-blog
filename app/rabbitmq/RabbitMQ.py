@@ -3,7 +3,7 @@ import pika
 import threading
 
 from app.utils.constants import ExchangeType
-from .util import logger
+from app.logger import logger
 
 
 class RabbitMQ(object):

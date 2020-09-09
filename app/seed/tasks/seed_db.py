@@ -3,9 +3,9 @@ import json
 import os
 
 from flask import current_app
-from app import db
 from app.blog.models import Blog
-from app.utils.constants import SeedMessage, CONNECTION_SUCCESSFUL
+from app.logger import logger
+from app.utils.constants import SeedMessage
 
 
 def init_product() -> None:
@@ -26,7 +26,7 @@ def init_product() -> None:
     blog_count = Blog.objects.count()
     # if seed_script is not running for the first time
     if blog_count:
-        print(SeedMessage.DATA_ALREADY_EXISTS.format(blog_table_name))
+        logger.info(SeedMessage.DATA_ALREADY_EXISTS.format(blog_table_name))
     else:
         # if seed script is running for the first time, insert records
         for blog in blogs:
@@ -36,7 +36,7 @@ def init_product() -> None:
         # Bulk Insert Records
         Blog.objects.insert(blogs_to_insert)
 
-        print(SeedMessage.WRITING_SUCCESSFUL.format(blog_table_name))
+        logger.info(SeedMessage.WRITING_SUCCESSFUL.format(blog_table_name))
 
 
 def execute() -> None:

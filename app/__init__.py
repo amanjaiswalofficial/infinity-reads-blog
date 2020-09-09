@@ -2,12 +2,14 @@ from flask import Flask
 from app.db import MongoAlchemy
 from flask_marshmallow import Marshmallow
 from app.seed import init_seed_script
+from app.logger import Logger
 from app.rabbitmq import RabbitMQ, Queue
 
 # Globally accessible libraries
 db = MongoAlchemy()
 ma = Marshmallow()
 rbmq = RabbitMQ()
+logger = Logger()
 queue = Queue()
 
 
@@ -18,6 +20,7 @@ def create_app(**kwargs):
 
     db.init_app(app)
     ma.init_app(app)
+    logger.init_app(app)
     rbmq.init_app(app, queue)
 
     with app.app_context():
