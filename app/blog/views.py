@@ -3,6 +3,8 @@ from flask import Blueprint, request
 
 from app.utils.response_helper import (success_response as success,
                                        failure_response as failure)
+from app.utils.validator import validator
+from .validations import blog_validate
 from app.blog.constants import BlogMessage
 from .service import get_blog, create_blog, update_blog, \
     delete_blog, get_blogs, get_filters
@@ -35,6 +37,7 @@ def blog_view(id: str) -> Dict:
 
 
 @blog.route("/blog", methods=["POST"])
+@validator([blog_validate])
 def blog_create_view() -> Dict:
     """
     API to create a particular blog.

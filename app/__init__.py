@@ -4,6 +4,7 @@ from flask_marshmallow import Marshmallow
 from app.seed import init_seed_script
 from app.logger import Logger
 from app.rabbitmq import RabbitMQ, Queue
+from app.exception_handler import init_error_handler
 
 # Globally accessible libraries
 db = MongoAlchemy()
@@ -22,6 +23,8 @@ def create_app(**kwargs):
     ma.init_app(app)
     logger.init_app(app)
     rbmq.init_app(app, queue)
+
+    init_error_handler(app)
 
     with app.app_context():
         from app.blog.views import blog

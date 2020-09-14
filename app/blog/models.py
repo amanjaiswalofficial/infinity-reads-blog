@@ -47,9 +47,11 @@ class BlogSchema(ma.Schema):
     """
     Defined Blog Schema
     """
+    user_id = fields.String(required=True,)
+    title = fields.Str(required=True)
+    content = fields.Str(required=True)
 
     class Meta:
-        model = Blog
         fields = ('id', 'user_id', 'title', 'content', 'created_at', 'updated_at', 'tags')
 
 
