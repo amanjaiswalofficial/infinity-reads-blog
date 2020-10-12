@@ -14,3 +14,14 @@ services:
       - ./data/mongodb:/data/db
     ports:
       - 27017:27017
+
+  web:
+    build: .
+    ports:
+      - 5000:5000
+    depends_on:
+      - database
+    volumes:
+      - .:/usr/blog/infinity-reads-blog/
+    env_file:
+      - docker.env
