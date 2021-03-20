@@ -6,7 +6,7 @@ flask-marshmallow==0.13.0
 importlib-metadata==1.7.0
 iniconfig==1.0.1
 itsdangerous==1.1.0
-Jinja2==2.11.2
+Jinja2==2.11.3
 MarkupSafe==1.1.1
 marshmallow==3.7.1
 mongoengine==0.20.0
